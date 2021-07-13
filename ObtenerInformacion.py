@@ -42,8 +42,8 @@ for i in range(0, len(arregloRuta) - 1):
 		sep = ','
 		arregloRuta[i][2] = destino.split(sep, 1)[0]
 		for j in range(0, len(aCorregir) - 1):
-			if arregloRuta[i][1] == aCorregir[i][1]:
-				arregloRuta[i][1] = aCorregir[i][2]
+			if arregloRuta[i][1] == aCorregir[j][1]:
+				arregloRuta[i][1] = aCorregir[j][2]
 				break
 		if 'Radial' in destino:
 			arregloRuta.remove(arregloRuta[i])
