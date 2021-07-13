@@ -14,7 +14,7 @@ row = Ruta_.max_row
 columnaNumeroTransporte = 2
 columnaOrigen = 4
 columnaDestino = 5
-columnaDistancia = 13
+columnaDistancia = 16
 # columnaToneladas = 12
 
 arregloRuta = []
@@ -28,10 +28,10 @@ for i in range(2, row + 1):
 				aCorregir.append([Ruta_.cell(i, columnaNumeroTransporte).value, Ruta_.cell(i, columnaOrigen).value,
 									Ruta_.cell(i, columnaDestino).value, Ruta_.cell(i, columnaDistancia)])
 				arregloRuta.append([Ruta_.cell(i, columnaNumeroTransporte).value, Ruta_.cell(i, columnaOrigen).value,
-									Ruta_.cell(i, columnaDestino).value, Ruta_.cell(i, columnaDistancia)])
+									Ruta_.cell(i, columnaDestino).value, Ruta_.cell(i, columnaDistancia).value])
 			else:
 				arregloRuta.append([Ruta_.cell(i, columnaNumeroTransporte).value, Ruta_.cell(i, columnaOrigen).value,
-								Ruta_.cell(i, columnaDestino).value, Ruta_.cell(i, columnaDistancia)])
+								Ruta_.cell(i, columnaDestino).value, Ruta_.cell(i, columnaDistancia).value])
 
 for i in range(0, len(arregloRuta) - 1):
 	siguiente = False
