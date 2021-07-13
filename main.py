@@ -1,6 +1,7 @@
 import openpyxl
 from pathlib import Path
 from collections import defaultdict
+from ObtenerInformacion import ObtenerInformacion
 
 informacion = {}
 
@@ -25,29 +26,14 @@ if __name__ == '__main__':
     leerExcel()
     iniciarNodos()
     crearArbol()
+    n = ObtenerInformacion
+    ObtenerInformacion.CrearDiccionarios(n)
+    #ObtenerInformacion.ImprimirRutas(n, "Torreon")
+    ObtenerInformacion.ImprimirRutasKilometro(n)
+
     print("end")
 
 
-class Node:
-    ciudadOrigen = ""
-    ciudadDestino = ""
-    toneladas = 0
-    viajes = 0
-
-    toneladasEfectivas = 0
-    viajesEfectivos = 0
-    ciudadFinal = ""
-    ciudadPapa = None
-    hijos = []
-
-    def backPropogate(self):
-        pass
-
-    def crearHijos(self):
-        pass
-
-    def esFinal(self):
-        pass
 
 
 

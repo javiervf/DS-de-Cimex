@@ -1,147 +1,123 @@
 import openpyxl
 from pathlib import Path
 from collections import defaultdict
+from Node import Node
 
 
-def clean(str):
-    str = str.replace("á", "a")
-    str = str.replace("é", "e")
-    str = str.replace("í", "i")
-    str = str.replace("ó", "o")
-    str = str.replace("ú", "u")
+def clean(returnString):
+	if any(element in returnString for element in ['D.F.', 'DF', 'CDMX', 'Zona']):
+		returnString = 'México'
 
-    str = str.rsplit(",")[0]
-    str = str.rsplit(" ")[0]
+	returnString = returnString.replace("á", "a")
+	returnString = returnString.replace("é", "e")
+	returnString = returnString.replace("í", "i")
+	returnString = returnString.replace("ó", "o")
+	returnString = returnString.replace("ú", "u")
 
-    return str
+	returnString = returnString.rsplit(",")[0]
+	#returnString = returnString.rsplit(" ")[0]
+
+	return returnString
 
 
 class ObtenerInformacion:
-    xlsx_file = Path('Rutas_Outbound.xlsx')
-    wb_obj = openpyxl.load_workbook(xlsx_file)
+	def __init__(self):
+		pass
 
-    Ruta_ = wb_obj['Ruta']
+	xlsx_file = Path('Rutas_Outbound.xlsx')
+	wb_obj = openpyxl.load_workbook(xlsx_file)
 
-    row = Ruta_.max_row
-    # columnaFecha = 1
-    COLUMNA_NUMERO_TRANSPORTE = 2
-    COLUMNA_ORIGEN = 4
-    COLUMNA_DESTINO = 5
-    COLUMNA_DISTANCIA = 13
-    COLUMNA_TONELADAS = 12
+	Ruta_ = wb_obj['Ruta']
 
-    ciudadesCambiadas = {}
-    sonMismaCiudad = {}
+	row = Ruta_.max_row
+	# columnaFecha = 1
+	COLUMNA_NUMERO_TRANSPORTE = 2
+	COLUMNA_ORIGEN = 4
+	COLUMNA_DESTINO = 5
+	COLUMNA_DISTANCIA = 16
+	COLUMNA_TONELADAS = 12
 
-    rutas = {}
+	ciudadesCambiadas = {}
+	sonMismaCiudad = {}
 
-    DISTANCIA_MINIMA_MISMA_CIUDAD = 60
+	rutas = {}
+	rutasNodos = {}
 
-    @staticmethod
-    def crearDicionarios(self):
-        for i in range(2, self.row + 1):
-            if (self.Ruta_.cell(i, self.COLUMNA_ORIGEN).value not in [0, '0', "", " ", None, "(blank)"] and
-                    self.Ruta_.cell(i, self.COLUMNA_DESTINO).value not in ['a recogido', "", " ", None, "(blank)"] and
-                    "Radial" not in self.Ruta_.cell(i, self.COLUMNA_DESTINO).value):
+	arbol = {}
 
-                origen = clean(self.Ruta_.cell(i, self.COLUMNA_ORIGEN).value)
-                destino = clean(self.Ruta_.cell(i, self.COLUMNA_DESTINO).value)
+	DISTANCIA_MINIMA_MISMA_CIUDAD = 60
+	DISTANCIA_MAXIMA_CIRCUITO = 4600 # la ruta con distancia maxima es 2292km
 
-                if self.Ruta_.cell(i, self.COLUMNA_DISTANCIA).value < self.DISTANCIA_MINIMA_MISMA_CIUDAD:
+	@staticmethod
+	def CrearDiccionarios(self):
+		for i in range(2, self.row + 1):
+			if (self.Ruta_.cell(i, self.COLUMNA_ORIGEN).value not in [0, '0', "", " ", None, "(blank)"] and
+					self.Ruta_.cell(i, self.COLUMNA_DESTINO).value not in ['a recogido', "", " ", None, "(blank)"] and
+					"Radial" not in self.Ruta_.cell(i, self.COLUMNA_DESTINO).value):
 
-                    if origen not in self.sonMismaCiudad:
-                        self.sonMismaCiudad[origen] = [destino]
-                    elif destino not in self.sonMismaCiudad[origen]:
-                        self.sonMismaCiudad[origen].append(destino)
+				origen = clean(self.Ruta_.cell(i, self.COLUMNA_ORIGEN).value)
+				destino = clean(self.Ruta_.cell(i, self.COLUMNA_DESTINO).value)
 
-                    if destino not in self.sonMismaCiudad:
-                        self.sonMismaCiudad[destino] = [origen]
-                    elif origen not in self.sonMismaCiudad[destino]:
-                        self.sonMismaCiudad[destino].append(origen)
+				if self.Ruta_.cell(i, self.COLUMNA_DISTANCIA).value < self.DISTANCIA_MINIMA_MISMA_CIUDAD:
 
-                ruta = [self.Ruta_.cell(i, self.COLUMNA_NUMERO_TRANSPORTE).value,
-                        destino,
-                        float(self.Ruta_.cell(i, self.COLUMNA_TONELADAS)),
-                        float(self.Ruta_.cell(i, self.COLUMNA_DISTANCIA))]
+					if origen not in self.sonMismaCiudad:
+						self.sonMismaCiudad[origen] = [destino]
+					elif destino not in self.sonMismaCiudad[origen]:
+						self.sonMismaCiudad[origen].append(destino)
 
-                if origen not in self.rutas:
-                    self.rutas[origen] = [ruta]
-                elif destino not in self.sonMismaCiudad[origen]:
-                    self.rutas[origen].append(ruta)
+					if destino not in self.sonMismaCiudad:
+						self.sonMismaCiudad[destino] = [origen]
+					elif origen not in self.sonMismaCiudad[destino]:
+						self.sonMismaCiudad[destino].append(origen)
 
-    @staticmethod
-    def idkYet(self):
-        for i in range(0, len(arregloRuta) - 1):
-            siguiente = False
-            if i == len(arregloRuta):
-                break
-            while not siguiente:
-                destino = str(arregloRuta[i][2])
-                sep = ','
-                arregloRuta[i][2] = destino.split(sep, 1)[0]
-                for j in range(0, len(aCorregir) - 1):
-                    if arregloRuta[i][1] == aCorregir[i][1]:
-                        arregloRuta[i][1] = aCorregir[i][2]
-                        break
-                if 'Radial' in destino:
-                    arregloRuta.remove(arregloRuta[i])
-                    continue
-                if 'D.F.' in destino or 'DF' in destino or 'CDMX' in destino or 'Zona' in destino:
-                    arregloRuta[i][2] = 'México'
-                if arregloRuta[i][1] == arregloRuta[i][2]:
-                    arregloRuta.remove(arregloRuta[i])
-                    continue
-                if i == len(arregloRuta):
-                    break
-                siguiente = True
+				ruta = [self.Ruta_.cell(i, self.COLUMNA_NUMERO_TRANSPORTE).value,
+						destino,
+						float(self.Ruta_.cell(i, self.COLUMNA_TONELADAS).value),
+						float(self.Ruta_.cell(i, self.COLUMNA_DISTANCIA).value)]
 
-        rutaFinal = []
-        guardar = True
+				node = Node(destino, float(self.Ruta_.cell(i, self.COLUMNA_TONELADAS).value), float(self.Ruta_.cell(i, self.COLUMNA_DISTANCIA).value), origen, origen)
 
-        for i in range(0, len(arregloRuta) - 1):
-            guardar = True
-            origen = arregloRuta[i][1]
-            destino = arregloRuta[i][2]
-            for j in range(i + 1, len(arregloRuta) - 1):
-                if arregloRuta[j][1] == origen:
-                    if arregloRuta[j][2] == destino:
-                        guardar = False
-            if guardar:
-                rutaFinal.append(arregloRuta[i])
+				if origen not in self.rutas:
+					self.rutas[origen] = [ruta]
+					self.rutasNodos[origen] = [node]
+				elif destino not in self.rutas.get(origen, [None, None]) and self.sonMismaCiudad.get(destino, [None])[0] not in self.rutas.get(origen, [None, None]) and destino != origen:
+					self.rutas[origen].append(ruta)
+					self.rutasNodos[origen].append(node)
 
-        print(rutaFinal)
+				 #if v[1] not in printed and self.sonMismaCiudad.get(v[1], [None])[0] not in printed and self.sonMismaCiudad.get(v[1], [None])[0] != k:
 
-        origenes = []
 
-# for i in range(0, len(rutaFinal) - 1):
-# 	guardar = True
-# origen = arregloRuta[i][1]
-# for j in range(i + 1, len(arregloRuta) - 1):
-# 	guardar = True
-# 	if arregloRuta[j][1] == origen:
-# 		guardar = False
-# if origenes is not None:
-# 	for k in range(0, len(origenes) - 1):
-# 		if arregloRuta[i][1] == origenes[k]:
-# 			guardar = False
-# if guardar:
-# 	origenes.append(arregloRuta[i][1])
-#
-# destinos = []
-#
-# for i in range(0, len(rutaFinal) - 1):
-# 	guardar = True
-# 	destino = arregloRuta[i][2]
-# 	for j in range(i + 1, len(arregloRuta) - 1):
-# 		guardar = True
-# 		if arregloRuta[j][2] == destino:
-# 			guardar = False
-# 	if destinos is not None:
-# 		for k in range(0, len(destinos) - 1):
-# 			if arregloRuta[i][2] == destinos[k]:
-# 				guardar = False
-# 	if guardar:
-# 		destinos.append(arregloRuta[i][1])
-#
-# print(origenes)
-# print(destinos)
+		for k in self.rutasNodos.keys():
+			print(k)
+			for v in self.rutasNodos[k]:
+				Node.printTree(Node, v, 1)
+
+	@staticmethod
+	def CrearArbolRutas(self):
+		for k in self.rutas.keys():
+			printed = [[k, 0]]
+			for v in self.rutas[k]:
+				if v[1] not in printed and self.sonMismaCiudad.get(v[1], [None])[0] not in printed and self.sonMismaCiudad.get(v[1], [None])[0] != k:
+					printed.append([v[1], v[3]])
+					printed[0][0] = max(printed[0][0], v[3])
+			self.arbol[k] = printed[1:]
+
+
+	@staticmethod
+	def ImprimirRutasKilometro(self):
+		for k in self.rutas.keys():
+			print(k)
+			printed = []
+			for v in self.rutas[k]:
+				#print("A = " + k + " ; B =" + self.sonMismaCiudad.get(v[1], ["as"])[0] + " ; C = ", self.sonMismaCiudad.get(v[1], ["as"])[0] != k)
+				if v[1] not in printed and self.sonMismaCiudad.get(v[1], [None])[0] not in printed and self.sonMismaCiudad.get(v[1], [None])[0] != k:
+					print("\t" + str(v[1]) + ": " + str(v[3]) + "km")
+					printed.append(v[1])
+
+	@staticmethod
+	def ImprimirRutas(self):
+		print(self.rutas)
+
+	@staticmethod
+	def ImprimirRutas(self, ciudad):
+		print(self.rutas[ciudad])
