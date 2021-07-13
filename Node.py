@@ -1,23 +1,45 @@
 class Node:
-    ciudadOrigen = ""
-    ciudadDestino = ""
-    toneladas = 0
-    viajes = 0
-    distanciaRuta = 0
+    # ciudadOrigen = ""
+    # ciudadDestino = ""
+    # toneladas = 0
+    # viajes = 0
+    # distanciaRuta = 0
+    #
+    # depth = 0
+    #
+    # toneladasEfectivas = 0
+    # viajesEfectivos = 0
+    # distanciaEfectiva = 0
+    # ciudadFinal = ""
+    # ciudadPapa = None
+    # hijos = []
 
-    toneladasEfectivas = 0
-    viajesEfectivos = 0
-    ciudadFinal = ""
-    ciudadPapa = None
-    hijos = []
+    def __init__(self, destino = "", toneladas = 0, distancia = 0, origen = None, ciudadFinal = None, ciudadPapa = None):
+        self.ciudadOrigen = ""
+        self.ciudadDestino = ""
+        self.toneladas = 0
+        self.viajes = 0
+        self.distanciaRuta = 0
 
-    def __init__(self, destino, toneladas, distancia, origen = None, ciudadFinal = None, ciudadPapa = None):
+        self.depth = 0
+
+        self.toneladasEfectivas = 0
+        self.viajesEfectivos = 0
+        self.distanciaEfectiva = 0
+        self.ciudadFinal = ""
+        self.ciudadPapa = None
+        self.hijos = []
+
+
+
         self.ciudadOrigen = origen
         self.ciudadDestino = destino
         self.toneladas = toneladas
         self.ciudadFinal = ciudadFinal
         self.ciudadPapa = ciudadPapa
         self.distanciaRuta = distancia
+
+
 
 
     def backPropogate(self):
@@ -31,6 +53,11 @@ class Node:
 
     @staticmethod
     def printTree(self, who, n):
-        print(n*"\t" + who.ciudadOrigen + " -> " + who.ciudadDestino)
+        try:
+            print(n*"\t" + who.ciudadOrigen + " -> " + who.ciudadDestino)
+        except:
+            print(n * "\t" + who.ciudadFinal)
+        if (n > 5):
+            print( "wit")
         for hijo in who.hijos:
-            self.printTree(hijo, n+1)
+            self.printTree(self, hijo, n+1)

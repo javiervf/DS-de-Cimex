@@ -41,12 +41,14 @@ class ObtenerInformacion:
 	sonMismaCiudad = {}
 
 	rutas = {}
+	rutasHelper = {}
 	rutasNodos = {}
 
-	arbol = {}
+	arbol = []
 
 	DISTANCIA_MINIMA_MISMA_CIUDAD = 60
 	DISTANCIA_MAXIMA_CIRCUITO = 4600 # la ruta con distancia maxima es 2292km
+	DEPTH_MAXIMA_CIRCUITO = 4
 
 	@staticmethod
 	def CrearDiccionarios(self):
@@ -79,28 +81,49 @@ class ObtenerInformacion:
 
 				if origen not in self.rutas:
 					self.rutas[origen] = [ruta]
+					self.rutasHelper[origen] = [destino]
 					self.rutasNodos[origen] = [node]
-				elif destino not in self.rutas.get(origen, [None, None]) and self.sonMismaCiudad.get(destino, [None])[0] not in self.rutas.get(origen, [None, None]) and destino != origen:
+				elif destino not in self.rutasHelper.get(origen, [None, None]) and destino != origen:
 					self.rutas[origen].append(ruta)
+					self.rutasHelper[origen].append(destino)
 					self.rutasNodos[origen].append(node)
 
-				 #if v[1] not in printed and self.sonMismaCiudad.get(v[1], [None])[0] not in printed and self.sonMismaCiudad.get(v[1], [None])[0] != k:
-
-
-		for k in self.rutasNodos.keys():
-			print(k)
-			for v in self.rutasNodos[k]:
-				Node.printTree(Node, v, 1)
+		#Node.buildTree(Node, self.rutasNodos, self.DISTANCIA_MAXIMA_CIRCUITO)
+		#for k in self.rutasNodos.keys():
+		#	print(k)
+		#	for v in self.rutasNodos[k]:
+		#		Node.printTree(Node, v, 1)
 
 	@staticmethod
-	def CrearArbolRutas(self):
-		for k in self.rutas.keys():
-			printed = [[k, 0]]
-			for v in self.rutas[k]:
-				if v[1] not in printed and self.sonMismaCiudad.get(v[1], [None])[0] not in printed and self.sonMismaCiudad.get(v[1], [None])[0] != k:
-					printed.append([v[1], v[3]])
-					printed[0][0] = max(printed[0][0], v[3])
-			self.arbol[k] = printed[1:]
+	def CrearArbolRutas(self, nodoPapa, esInicio = False):
+		if esInicio:
+			for k in self.rutas.keys():
+				n = Node()
+				n.ciudadFinal = k
+				self.arbol.append(n)
+				self.CrearArbolRutas(self, self.arbol[-1])
+			return
+
+		lista = []
+		if nodoPapa.ciudadDestino is not None and nodoPapa.ciudadDestino != "":
+			try:
+				lista = self.rutasNodos[nodoPapa.ciudadDestino]
+			except:
+				lista = self.rutasNodos.get(self.sonMismaCiudad.get(nodoPapa.ciudadDestino, [None])[0], [])
+		else:
+			lista = self.rutasNodos[nodoPapa.ciudadFinal]
+
+		for ruta in lista:
+			nodoPapa.hijos.append(ruta)
+			ruta.depth = nodoPapa.depth + 1
+			ruta.distanciaEfectiva = nodoPapa.distanciaEfectiva + ruta.distanciaRuta
+
+			if (ruta.ciudadDestino == ruta.ciudadFinal or ruta.ciudadFinal in self.sonMismaCiudad.get(ruta.ciudadDestino, [None]) or
+					ruta.depth > self.DEPTH_MAXIMA_CIRCUITO or ruta.distanciaEfectiva > self.DISTANCIA_MAXIMA_CIRCUITO):
+				return
+
+			self.CrearArbolRutas(self, ruta)
+
 
 
 	@staticmethod
