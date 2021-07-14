@@ -1,19 +1,4 @@
 class Node:
-    # ciudadOrigen = ""
-    # ciudadDestino = ""
-    # toneladas = 0
-    # viajes = 0
-    # distanciaRuta = 0
-    #
-    # depth = 0
-    #
-    # toneladasEfectivas = 0
-    # viajesEfectivos = 0
-    # distanciaEfectiva = 0
-    # ciudadFinal = ""
-    # ciudadPapa = None
-    # hijos = []
-
     def __init__(self, destino = "", toneladas = 0, distancia = 0, origen = None, ciudadFinal = None, ciudadPapa = None):
         self.ciudadOrigen = ""
         self.ciudadDestino = ""
@@ -43,14 +28,7 @@ class Node:
 
 
 
-
     def backPropogate(self):
-        pass
-
-    def crearHijos(self):
-        pass
-
-    def esFinal(self):
         pass
 
     @staticmethod
@@ -59,9 +37,6 @@ class Node:
             print(n*"\t" + who.ciudadOrigen + " -> " + who.ciudadDestino)
         except:
             print(n * "\t" + who.ciudadFinal)
-        if (n > 3):
-            #print( "wit")
-            #return
-            pass
+
         for hijo in who.hijos:
             self.printTree(self, hijo, n+1)

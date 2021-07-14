@@ -33,6 +33,7 @@ if __name__ == '__main__':
     #ObtenerInformacion.ImprimirRutasKilometro(n)
     ObtenerInformacion.CrearArbolRutas(n, None, True)
     ObtenerInformacion.LimpiarArbolRutas(n, None, True)
+    #ObtenerInformacion.LimpiarArbolNone(n, None, None)
 
     for k in ObtenerInformacion.arbol:
         #print(k.ciudadOrigen)
