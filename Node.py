@@ -27,10 +27,6 @@ class Node:
         self.distanciaRuta = distancia
 
 
-
-    def backPropogate(self):
-        pass
-
     @staticmethod
     def printTree(self, who, n):
         try:
