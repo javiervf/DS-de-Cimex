@@ -89,6 +89,9 @@ class ObtenerInformacion:
 					self.rutasHelper[origen].append(destino)
 					self.rutasNodos[origen].append(node)
 
+		for k,v in self.sonMismaCiudad.items():
+			print(k + ": [" + ", ".join(v) + "]")
+
 		#Node.buildTree(Node, self.rutasNodos, self.DISTANCIA_MAXIMA_CIRCUITO)
 		#for k in self.rutasNodos.keys():
 		#	print(k)
@@ -118,14 +121,20 @@ class ObtenerInformacion:
 			ruta_ = deepcopy(ruta)
 			nodoPapa.hijos.append(ruta_)
 			ruta_.nodoPadre = nodoPapa
+			ruta_.ciudadesPrevias.append(nodoPapa.ciudadDestino)
 			ruta_.depth = nodoPapa.depth + 1
 			ruta_.distanciaEfectiva = nodoPapa.distanciaEfectiva + ruta.distanciaRuta
 			ruta_.ciudadFinal = nodoPapa.ciudadFinal
 
-			print("p: " + str(nodoPapa.depth) + "; h:" + str(ruta_.depth))
-			print("p: " + str(nodoPapa.distanciaEfectiva) + "; h:" + str(ruta_.distanciaEfectiva))
-			print(ruta_.ciudadDestino + "; " + ' '.join(self.sonMismaCiudad.get(ruta_.ciudadDestino, ['None'])) + "==" + ruta_.ciudadFinal)
+			# print("p: " + str(nodoPapa.depth) + "; h: " + str(ruta_.depth))
+			# print("p:" + str(nodoPapa.distanciaEfectiva) + "; h:" + str(ruta_.distanciaEfectiva))
+			# print(ruta_.ciudadDestino + "; " + ' '.join(self.sonMismaCiudad.get(ruta_.ciudadDestino, ['None'])) + "==" + ruta_.ciudadFinal)
+			if ruta_.ciudadDestino in ruta_.ciudadesPrevias or any(i in self.sonMismaCiudad.get(ruta_.ciudadDestino, [None]) for i in ruta_.ciudadesPrevias):
+				del nodoPapa.hijos[-1]
+				return
 			if ruta_.ciudadDestino == ruta_.ciudadFinal or ruta_.ciudadFinal in self.sonMismaCiudad.get(ruta_.ciudadDestino, [None]):
+				if ruta_.ciudadFinal in self.sonMismaCiudad.get(ruta_.ciudadDestino, [None]):
+					ruta.ciudadDestino += "(" + ruta_.ciudadFinal + ")"
 				return
 			if ruta_.depth > self.DEPTH_MAXIMA_CIRCUITO or ruta_.distanciaEfectiva > self.DISTANCIA_MAXIMA_CIRCUITO:
 				del nodoPapa.hijos[-1]
@@ -133,10 +142,26 @@ class ObtenerInformacion:
 
 			self.CrearArbolRutas(self, ruta_)
 
-		if nodoPapa is not None and (nodoPapa.hijos) == 0:
+		if nodoPapa is not None and len(nodoPapa.hijos) == 0 and nodoPapa.nodoPadre is not None:
 			nodoPapa.nodoPadre.hijos.remove(nodoPapa)
 
+	@staticmethod
+	def LimpiarArbolRutas(self, nodo, esInicio = False):
+		if esInicio:
+			for k in self.rutas.keys():
+				self.LimpiarArbolRutas(self, self.arbol[-1])
+			return
 
+		if nodo is None:
+			return
+
+		for hijo in nodo.hijos:
+			self.LimpiarArbolRutas(self, hijo)
+
+		if len(nodo.hijos) == 0 and not (nodo.ciudadDestino == nodo.ciudadFinal or nodo.ciudadFinal in self.sonMismaCiudad.get(nodo.ciudadDestino, [None])):
+			nodo.nodoPadre.hijos.remove(nodo)
+			del nodo
+			return
 
 	@staticmethod
 	def ImprimirRutasKilometro(self):

@@ -29,6 +29,7 @@ class Node:
         self.ciudadFinal = ""
         self.ciudadPapa = None
         self.hijos = []
+        self.ciudadesPrevias = []
         self.nodoPadre = None
 
 
