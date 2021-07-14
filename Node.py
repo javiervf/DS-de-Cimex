@@ -29,6 +29,7 @@ class Node:
         self.ciudadFinal = ""
         self.ciudadPapa = None
         self.hijos = []
+        self.nodoPadre = None
 
 
 
@@ -57,7 +58,9 @@ class Node:
             print(n*"\t" + who.ciudadOrigen + " -> " + who.ciudadDestino)
         except:
             print(n * "\t" + who.ciudadFinal)
-        if (n > 5):
-            print( "wit")
+        if (n > 3):
+            #print( "wit")
+            #return
+            pass
         for hijo in who.hijos:
             self.printTree(self, hijo, n+1)

@@ -2,6 +2,7 @@ import openpyxl
 from pathlib import Path
 from collections import defaultdict
 from Node import Node
+from copy import deepcopy
 
 
 def clean(returnString):
@@ -114,15 +115,26 @@ class ObtenerInformacion:
 			lista = self.rutasNodos[nodoPapa.ciudadFinal]
 
 		for ruta in lista:
-			nodoPapa.hijos.append(ruta)
-			ruta.depth = nodoPapa.depth + 1
-			ruta.distanciaEfectiva = nodoPapa.distanciaEfectiva + ruta.distanciaRuta
+			ruta_ = deepcopy(ruta)
+			nodoPapa.hijos.append(ruta_)
+			ruta_.nodoPadre = nodoPapa
+			ruta_.depth = nodoPapa.depth + 1
+			ruta_.distanciaEfectiva = nodoPapa.distanciaEfectiva + ruta.distanciaRuta
+			ruta_.ciudadFinal = nodoPapa.ciudadFinal
 
-			if (ruta.ciudadDestino == ruta.ciudadFinal or ruta.ciudadFinal in self.sonMismaCiudad.get(ruta.ciudadDestino, [None]) or
-					ruta.depth > self.DEPTH_MAXIMA_CIRCUITO or ruta.distanciaEfectiva > self.DISTANCIA_MAXIMA_CIRCUITO):
+			print("p: " + str(nodoPapa.depth) + "; h:" + str(ruta_.depth))
+			print("p: " + str(nodoPapa.distanciaEfectiva) + "; h:" + str(ruta_.distanciaEfectiva))
+			print(ruta_.ciudadDestino + "; " + ' '.join(self.sonMismaCiudad.get(ruta_.ciudadDestino, ['None'])) + "==" + ruta_.ciudadFinal)
+			if ruta_.ciudadDestino == ruta_.ciudadFinal or ruta_.ciudadFinal in self.sonMismaCiudad.get(ruta_.ciudadDestino, [None]):
+				return
+			if ruta_.depth > self.DEPTH_MAXIMA_CIRCUITO or ruta_.distanciaEfectiva > self.DISTANCIA_MAXIMA_CIRCUITO:
+				del nodoPapa.hijos[-1]
 				return
 
-			self.CrearArbolRutas(self, ruta)
+			self.CrearArbolRutas(self, ruta_)
+
+		if nodoPapa is not None and (nodoPapa.hijos) == 0:
+			nodoPapa.nodoPadre.hijos.remove(nodoPapa)
 
 
 

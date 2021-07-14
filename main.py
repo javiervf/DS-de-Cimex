@@ -36,6 +36,7 @@ if __name__ == '__main__':
     for k in ObtenerInformacion.arbol:
         #print(k.ciudadOrigen)
         Node.printTree(Node, k, 0)
+        pass
 
     print("end")
 
