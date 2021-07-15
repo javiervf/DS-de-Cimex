@@ -132,8 +132,8 @@ class ObtenerInformacion:
 			for k in self.rutas.keys():
 				n = Node()
 				n.ciudadFinal = k
-				n.viajes = 9999999999
-				n.toneladas = 9999999999
+				n.viajes = 999999999
+				n.toneladas = 999999999
 				self.arbol.append(n)
 				self.CrearArbolRutas(self, self.arbol[-1])
 			return
