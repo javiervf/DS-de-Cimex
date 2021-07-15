@@ -211,6 +211,27 @@ class ObtenerInformacion:
 		nodo.hijos = [x for x in nodo.hijos if x is not None]
 
 	@staticmethod
+	def Backpropagate(self, nodo, esInicio=False):
+		if esInicio:
+			for origen in self.arbol:
+				self.Backpropagate(self, origen)
+			return
+
+		if len(nodo.hijos) != 0:
+			nodo.viajesMax = 0
+			nodo.toneladasMax = 0
+			for hijo in nodo.hijos:
+				ObtenerInformacion.Backpropagate(self, hijo)
+				nodo.viajesMax += hijo.viajesMax
+				nodo.toneladasMax += hijo.toneladasMax
+			nodo.viajesMax = min(nodo.viajesMax, nodo.viajes)
+			nodo.toneladasMax = min(nodo.toneladasMax, nodo.toneladas)
+		else:
+			nodo.viajesMax = nodo.viajes
+			nodo.toneladasMax = nodo.toneladas
+
+
+	@staticmethod
 	def LimpiarArbolNone(self, nodo, esInicio=False):
 		if esInicio:
 			for origen in self.arbol:

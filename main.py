@@ -9,6 +9,7 @@ if __name__ == '__main__':
     ObtenerInformacion.CrearDiccionarios(n)
     ObtenerInformacion.CrearArbolRutas(n, None, True)
     ObtenerInformacion.LimpiarArbolRutas(n, None, True)
+    ObtenerInformacion.Backpropagate(n, None, True)
 
     for k in ObtenerInformacion.arbol:
         Node.printTree(Node, k, 0)
