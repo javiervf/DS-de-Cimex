@@ -31,9 +31,12 @@ class Node:
     @staticmethod
     def printTree(self, who, n):
         try:
-            print(n*"\t" + who.ciudadOrigen + " -> " + who.ciudadDestino + ": " + str(who.toneladasMax) + "ton. " + str(who.viajesMax) + " viaj.")
+            print(n*"\t" + who.ciudadOrigen + " -> " + who.ciudadDestino + ": " + str(round(who.toneladasMax, 2)) + "ton. " + str(round(who.viajesMax, 2)) + " viaj.")
         except:
-            print(n * "\t" + who.ciudadFinal + ": " + str(who.toneladasMax) + "ton. " + str(who.viajesMax) + " viaj.")
+            if who.toneladasMax == 999999999:
+                who.toneladasMax = 0
+                who.viajesMax = 0
+            print(n * "\t" + who.ciudadFinal + ": " + str(round(who.toneladasMax, 2)) + "ton. " + str(round(who.viajesMax, 2)) + " viaj.")
 
         for hijo in who.hijos:
             self.printTree(self, hijo, n+1)
