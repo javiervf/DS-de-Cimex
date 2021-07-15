@@ -127,6 +127,34 @@ class ObtenerInformacion:
 				self.sonMismaCiudad[destino].append(origen)
 
 	@staticmethod
+	def CreacionMismaCiudad2(self):
+		xlsx_file_2 = Path('Rutas_Cemix_Origen_TodosDestinos.xlsx')
+		wb_obj_2 = openpyxl.load_workbook(xlsx_file_2)
+
+		Ruta_2_ = wb_obj_2['Sheet1']
+
+		row_2 = Ruta_2_.max_row
+
+		COLUMNA_ORIGEN_2 = 1
+		COLUMNA_DESTINO_2 = 2
+		COLUMNA_DISTANCIA_2 = 3
+
+		for i in range(2, row_2 + 1):
+			origen = clean(Ruta_2_.cell(i, COLUMNA_ORIGEN_2).value)
+			destino = clean(Ruta_2_.cell(i, COLUMNA_DESTINO_2).value)
+
+			if Ruta_2_.cell(i, COLUMNA_DISTANCIA_2).value < self.DISTANCIA_MINIMA_MISMA_CIUDAD:
+				if origen not in self.sonMismaCiudad:
+					self.sonMismaCiudad[origen] = [destino]
+				elif destino not in self.sonMismaCiudad[origen]:
+					self.sonMismaCiudad[origen].append(destino)
+
+				if destino not in self.sonMismaCiudad:
+					self.sonMismaCiudad[destino] = [origen]
+				elif origen not in self.sonMismaCiudad[destino]:
+					self.sonMismaCiudad[destino].append(origen)
+
+	@staticmethod
 	def CrearArbolRutas(self, nodoPapa, esInicio=False):
 		if esInicio:
 			for k in self.rutas.keys():

@@ -6,6 +6,7 @@ if __name__ == '__main__':
 
     n = ObtenerInformacion
     #ObtenerInformacion.Cosita(n)
+    ObtenerInformacion.CreacionMismaCiudad2(n)
     ObtenerInformacion.CrearDiccionarios(n)
     ObtenerInformacion.CrearArbolRutas(n, None, True)
     ObtenerInformacion.LimpiarArbolRutas(n, None, True)
