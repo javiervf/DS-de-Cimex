@@ -5,6 +5,7 @@ if __name__ == '__main__':
     print("start\n")
 
     n = ObtenerInformacion
+    #ObtenerInformacion.Cosita(n)
     ObtenerInformacion.CrearDiccionarios(n)
     ObtenerInformacion.CrearArbolRutas(n, None, True)
     ObtenerInformacion.LimpiarArbolRutas(n, None, True)

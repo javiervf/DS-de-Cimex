@@ -37,6 +37,7 @@ class ObtenerInformacion:
 	COLUMNA_DESTINO = 5
 	COLUMNA_DISTANCIA = 16
 	COLUMNA_TONELADAS = 12
+	COLUMNA_VIAJES = 13
 
 	ciudadesCambiadas = {}
 	sonMismaCiudad = {}
@@ -50,6 +51,18 @@ class ObtenerInformacion:
 	DISTANCIA_MINIMA_MISMA_CIUDAD = 60
 	DISTANCIA_MAXIMA_CIRCUITO = 4600  # la ruta con distancia maxima es 2292km
 	DEPTH_MAXIMA_CIRCUITO = 4
+
+	@staticmethod
+	def Cosita(self):
+		a = []
+		for i in range(2, self.row + 1):
+			if (self.Ruta_.cell(i, self.COLUMNA_ORIGEN).value not in [0, '0', "", " ", None, "(blank)"] and
+					self.Ruta_.cell(i, self.COLUMNA_DESTINO).value not in ['a recogido', "", " ", None, "(blank)"] and
+					"Radial" not in self.Ruta_.cell(i, self.COLUMNA_DESTINO).value) and \
+					(clean(self.Ruta_.cell(i, self.COLUMNA_DESTINO).value) not in a):
+				a.append(clean(self.Ruta_.cell(i, self.COLUMNA_DESTINO).value))
+		a.sort()
+		print("[" + ", ".join(a) + "]")
 
 	@staticmethod
 	def CrearDiccionarios(self):
@@ -81,8 +94,11 @@ class ObtenerInformacion:
 				float(self.Ruta_.cell(i, self.COLUMNA_TONELADAS).value),
 				float(self.Ruta_.cell(i, self.COLUMNA_DISTANCIA).value)]
 
-		node = Node(destino, float(self.Ruta_.cell(i, self.COLUMNA_TONELADAS).value),
-					float(self.Ruta_.cell(i, self.COLUMNA_DISTANCIA).value), origen, origen)
+		node = Node(destino,
+					float(self.Ruta_.cell(i, self.COLUMNA_TONELADAS).value),
+					float(self.Ruta_.cell(i, self.COLUMNA_DISTANCIA).value),
+					origen, origen,
+					float(self.Ruta_.cell(i, self.COLUMNA_VIAJES).value))
 
 		if origen not in self.rutas:
 			self.rutas[origen] = [ruta]
@@ -92,6 +108,9 @@ class ObtenerInformacion:
 			self.rutas[origen].append(ruta)
 			self.rutasHelper[origen].append(destino)
 			self.rutasNodos[origen].append(node)
+		elif destino in self.rutasHelper.get(origen, [None]):
+			([x for x in self.rutasNodos[origen] if x.ciudadDestino == destino])[0].viajes += node.viajes
+			([x for x in self.rutasNodos[origen] if x.ciudadDestino == destino])[0].toneladas += node.toneladas
 
 	@staticmethod
 	def CreacionMismaCiudad(self, i, origen, destino):
@@ -113,6 +132,8 @@ class ObtenerInformacion:
 			for k in self.rutas.keys():
 				n = Node()
 				n.ciudadFinal = k
+				n.viajes = 9999999999
+				n.toneladas = 9999999999
 				self.arbol.append(n)
 				self.CrearArbolRutas(self, self.arbol[-1])
 			return
@@ -128,24 +149,38 @@ class ObtenerInformacion:
 		for ruta in lista:
 			ruta_ = deepcopy(ruta)
 			nodoPapa.hijos.append(ruta_)
+
 			ruta_.nodoPadre = nodoPapa
-			ruta_.ciudadesPrevias.append(nodoPapa.ciudadDestino)
-			ruta_.depth = nodoPapa.depth + 1
-			ruta_.distanciaEfectiva = nodoPapa.distanciaEfectiva + ruta.distanciaRuta
 			ruta_.ciudadFinal = nodoPapa.ciudadFinal
+
+			ruta_.depth = nodoPapa.depth + 1
+			ruta_.distanciaEfectiva = nodoPapa.distanciaEfectiva + ruta_.distanciaRuta
 
 			if ruta_.ciudadDestino in ruta_.ciudadesPrevias or any(
 					i in self.sonMismaCiudad.get(ruta_.ciudadDestino, [None]) for i in ruta_.ciudadesPrevias):
 				del nodoPapa.hijos[-1]
 				return
+
+			ruta_.ciudadesPrevias.append(nodoPapa.ciudadDestino)
+
 			if ruta_.ciudadDestino == ruta_.ciudadFinal or ruta_.ciudadFinal in self.sonMismaCiudad.get(
 					ruta_.ciudadDestino, [None]):
+
+				ruta_.nodoPadre.viajesMax = ruta_.nodoPadre.viajesMax + ruta_.viajes if ruta_.nodoPadre.viajesMax + ruta_.viajes < ruta_.nodoPadre.viajes else ruta_.nodoPadre.viajes
+				ruta_.nodoPadre.toneladasMax = ruta_.nodoPadre.toneladasMax + ruta_.toneladas if ruta_.nodoPadre.toneladasMax + ruta_.toneladas < ruta_.nodoPadre.toneladas else ruta_.nodoPadre.toneladas
+
 				if ruta_.ciudadFinal in self.sonMismaCiudad.get(ruta_.ciudadDestino, [None]):
 					ruta.ciudadDestino += "(" + ruta_.ciudadFinal + ")"
+				ruta_.viajesMax = ruta_.viajes
+				ruta_.toneladasMax = ruta_.toneladas
 				return
+
 			if ruta_.depth > self.DEPTH_MAXIMA_CIRCUITO or ruta_.distanciaEfectiva > self.DISTANCIA_MAXIMA_CIRCUITO:
 				del nodoPapa.hijos[-1]
 				return
+
+			ruta_.nodoPadre.viajesMax = ruta_.nodoPadre.viajesMax + ruta_.viajes if ruta_.nodoPadre.viajesMax + ruta_.viajes < ruta_.nodoPadre.viajes else ruta_.nodoPadre.viajes
+			ruta_.nodoPadre.toneladasMax = ruta_.nodoPadre.toneladasMax + ruta_.toneladas if ruta_.nodoPadre.toneladasMax + ruta_.toneladas < ruta_.nodoPadre.toneladas else ruta_.nodoPadre.toneladas
 
 			self.CrearArbolRutas(self, ruta_)
 
