@@ -1,5 +1,5 @@
 class Node:
-    def __init__(self, destino = "", toneladas = 0, distancia = 0, origen = None, ciudadFinal = None, viajes = 0, ciudadPapa = None):
+    def __init__(self, destino = "", toneladas = 0, distancia = 0, origen = None, viajes = 0, ciudadPapa = None):
         self.ciudadOrigen = ""
         self.ciudadDestino = ""
         self.toneladas = 0
@@ -22,7 +22,6 @@ class Node:
         self.ciudadOrigen = origen
         self.ciudadDestino = destino
         self.toneladas = toneladas
-        self.ciudadFinal = ciudadFinal
         self.ciudadPapa = ciudadPapa
         self.distanciaRuta = distancia
         self.viajes = viajes
