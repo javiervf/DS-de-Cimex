@@ -300,8 +300,8 @@ class ObtenerInformacion:
 				ruta_.toneladasMax = ruta_.toneladas
 				continue
 
-			if ruta_.depth > self.DEPTH_MAXIMA_CIRCUITO or ruta_.distanciaEfectiva > self.DISTANCIA_MAXIMA_CIRCUITO:
-				del nodoPapa.hijos[-1]
+			if ruta_.depth > self.DEPTH_MAXIMA_CIRCUITO:# or ruta_.distanciaEfectiva > self.DISTANCIA_MAXIMA_CIRCUITO:
+				nodoPapa.hijos.remove(ruta_)
 				continue
 
 			ruta_.nodoPadre.viajesMax = ruta_.nodoPadre.viajesMax + ruta_.viajes if ruta_.nodoPadre.viajesMax + ruta_.viajes < ruta_.nodoPadre.viajes else ruta_.nodoPadre.viajes
