@@ -1,51 +1,24 @@
-import openpyxl
-from pathlib import Path
-from collections import defaultdict
+from ObtenerInformacion import ObtenerInformacion
+from Node import Node
 
-informacion = {}
-
-def leerExcel():
-    pass
-
-def iniciarNodos():
-    pass
-
-def printNodeInfo():
-    pass
-
-def printTreeInfo():
-    pass
-
-def crearArbol():
-    pass
-
-# Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    leerExcel()
-    iniciarNodos()
-    crearArbol()
+    print("start\n")
+
+    n = ObtenerInformacion
+    #ObtenerInformacion.Cosita(n)
+    ObtenerInformacion.CreacionMismaCiudad2(n)
+    ObtenerInformacion.CrearDiccionarios(n)
+    ObtenerInformacion.CrearArbolRutas(n, None, True)
+    ObtenerInformacion.LimpiarArbolRutas(n, None, True)
+    ObtenerInformacion.Backpropagate(n, None, True)
+
+    for k in ObtenerInformacion.arbol:
+        Node.printTree(Node, k, 0)
 
 
-class Node:
-    ciudadOrigen = ""
-    ciudadDestino = ""
-    toneladas = 0
-    viajes = 0
+    print("\nend")
 
-    toneladasEfectivas = 0
-    viajesEfectivos = 0
-    ciudadFinal = ""
-    ciudadPapa = None
-    hijos = []
 
-    def backPropogate(self):
-        pass
-
-    def crearHijos(self):
-        pass
-
-    def esFinal(self):
-        pass
 
 
 
